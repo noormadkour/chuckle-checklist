@@ -1,61 +1,101 @@
-import { useState, useEffect } from "react";
 import "./App.css";
-import stevePic from "./assets/steve.png"
-import { getAllJokes } from "./services/jokeService";
+import stevePic from "./assets/steve.png";
+import { useState, useEffect } from "react";
+import { getAllJokes, submitJoke } from "./services/jokeService";
 
 export const App = () => {
-  const [userInput, setUserInput] = useState("");
-
-  const submitJoke = async () => {
-    const jokeObject = {
-      text: userInput,
-      told: false,
-    };
-
-    try {
-      const response = await fetch("http://localhost:8088/jokes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(jokeObject),
-      });
-
-      if (response.ok) {
-        console.log("Joke submitted successfully");
-        setUserInput("");
-      } else {
-        console.error("Failed to submit joke");
-      }
-    } catch (error) {
-      console.error("Error submitting joke:", error);
-    }
+  const getJokes = () => {
+    getAllJokes().then((jokesArray) => setAllJokes(jokesArray));
   };
+
+  const [userInput, setUserInput] = useState("");
+  const [allJokes, setAllJokes] = useState([]);
+  const [toldJokes, setToldJokes] = useState([]);
+  const [untoldJokes, setUntoldJokes] = useState([]);
+
+  useEffect(() => {
+    getAllJokes().then((jokesArray) => {
+      setAllJokes(jokesArray);
+    });
+  }, []);
+
+  useEffect(() => {
+    setToldJokes(allJokes.filter((joke) => joke.told === true));
+    setUntoldJokes(allJokes.filter((joke) => joke.told === false));
+  }, [allJokes]);
 
   return (
     <>
-      <div className="app-heading">
-        <div className="app-heading-circle">
-          <img className="app-logo" src={stevePic} alt="Good job Steve" />
+      <div className="app-container">
+        <div className="app-heading">
+          <div className="app-heading-circle">
+            <img className="app-logo" src={stevePic} alt="Good job Steve" />
+          </div>
+          <h1 className="app-heading-text">Chuckle List</h1>
         </div>
-        <h1 className="app-heading-text">Chuckle List</h1>
-        <h2>Add Joke</h2>
-        <div className="joke-add-form">
-          <input
-            className="joke-input"
-            type="text"
-            value={userInput}
-            placeholder="New One Liner"
-            onChange={(event) => {
-              setUserInput(event.target.value);
-            }}
-          />
-          <button
-            className="joke-input-submit"
-            onClick={userInput ? submitJoke : null}
-          >
-            Submit Your Corny-Ass Joke
-          </button>
+        <div>
+          <h2>Add Joke</h2>
+          <div className="joke-add-form">
+            <input
+              className="joke-input"
+              type="text"
+              value={userInput}
+              placeholder="New One Liner"
+              onChange={(event) => {
+                setUserInput(event.target.value);
+              }}
+            />
+            <button
+              className="joke-input-submit"
+              onClick={async () => {
+                if (userInput !== "") {
+                  await submitJoke(userInput);
+                  setUserInput("");
+                  await getJokes(); // Wait for submitJoke and getJokes to complete
+                } else {
+                  console.error("No empty strings please");
+                }
+              }}
+            >
+              Submit Your Corny-Ass Joke
+            </button>
+          </div>
+        </div>
+        <div className="joke-lists-container">
+          <div className="joke-list-container">
+            <h2>
+              <i className="fa-regular fa-face-grin-squint face-emoji"></i>
+              Untold Jokes
+              <span className="untold-count">{untoldJokes.length}</span>
+            </h2>
+            {untoldJokes.map((joke) => {
+              return (
+                <li className="joke-list-item" key={joke.id}>
+                  <p className="joke-list-item-text">{joke.text}</p>
+                  <button className="button-emoji" onClick={() => {}}>
+                    <i className="fa-regular fa-face-meh" />
+                  </button>
+                </li>
+              );
+            })}
+          </div>
+          <div className="joke-list-container">
+            <h2>
+              <i className="fa-regular fa-face-grin-squint face-emoji"></i>
+              Told Jokes
+              <span className="told-count">{toldJokes.length}</span>
+            </h2>
+            {toldJokes.map((joke) => {
+              return (
+                <li className="joke-list-item" key={joke.id}>
+                  <p className="joke-list-item-text">{joke.text}</p>
+                  <button className="button-emoji" onClick={() => {}}>
+                    <i className="fa-regular fa-face-meh" />
+                  </button>
+                </li>
+              );
+            })}
+          </div>
         </div>
       </div>
     </>
