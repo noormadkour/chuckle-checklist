@@ -1,9 +1,15 @@
 import "./App.css";
 import stevePic from "./assets/steve.png";
 import { useState, useEffect } from "react";
-import { getAllJokes, submitJoke } from "./services/jokeService";
+import {
+  getAllJokes,
+  submitJoke,
+  editJoke,
+  deleteJoke,
+} from "./services/jokeService";
 
 export const App = () => {
+
   const getJokes = () => {
     getAllJokes().then((jokesArray) => setAllJokes(jokesArray));
   };
@@ -23,6 +29,15 @@ export const App = () => {
     setToldJokes(allJokes.filter((joke) => joke.told === true));
     setUntoldJokes(allJokes.filter((joke) => joke.told === false));
   }, [allJokes]);
+
+  const handleToggleJoke = (joke) => {
+    joke.told = !joke.told;
+    editJoke(joke).then(() => getJokes());
+  };
+
+  const handleDeleteJoke = (joke) => {
+    deleteJoke(joke).then(() => getJokes());
+  }
 
   return (
     <>
@@ -53,7 +68,7 @@ export const App = () => {
                   setUserInput("");
                   await getJokes(); // Wait for submitJoke and getJokes to complete
                 } else {
-                  console.error("No empty strings please");
+                  window.alert("No empty strings please");
                 }
               }}
             >
@@ -64,7 +79,7 @@ export const App = () => {
         <div className="joke-lists-container">
           <div className="joke-list-container">
             <h2>
-              <i className="fa-regular fa-face-grin-squint face-emoji"></i>
+              <i className="fa-regular fa-face-meh face-emoji"></i>
               Untold Jokes
               <span className="untold-count">{untoldJokes.length}</span>
             </h2>
@@ -72,7 +87,17 @@ export const App = () => {
               return (
                 <li className="joke-list-item" key={joke.id}>
                   <p className="joke-list-item-text">{joke.text}</p>
-                  <button className="button-emoji" onClick={() => {}}>
+                  <button 
+                    className="button-delete"
+                    onClick={() => handleDeleteJoke(joke)}
+                  >
+                    <i className="fa-regular fa-trash"/>
+                  </button>
+                  <button
+                    className="button-emoji"
+                    value={joke.id}
+                    onClick={() => handleToggleJoke(joke)}
+                  >
                     <i className="fa-regular fa-face-meh" />
                   </button>
                 </li>
@@ -89,8 +114,17 @@ export const App = () => {
               return (
                 <li className="joke-list-item" key={joke.id}>
                   <p className="joke-list-item-text">{joke.text}</p>
-                  <button className="button-emoji" onClick={() => {}}>
-                    <i className="fa-regular fa-face-meh" />
+                  <button 
+                    className="button-delete"
+                    onClick={() => handleDeleteJoke(joke)}
+                  >
+                    <i className="fa-regular fa-trash"/>
+                  </button>
+                  <button
+                    className="button-emoji"
+                    onClick={() => handleToggleJoke(joke)}
+                  >
+                    <i className="fa-regular fa-face-grin-squint" />
                   </button>
                 </li>
               );
