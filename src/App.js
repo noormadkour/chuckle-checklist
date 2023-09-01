@@ -9,7 +9,6 @@ import {
 } from "./services/jokeService";
 
 export const App = () => {
-
   const getJokes = () => {
     getAllJokes().then((jokesArray) => setAllJokes(jokesArray));
   };
@@ -37,7 +36,7 @@ export const App = () => {
 
   const handleDeleteJoke = (joke) => {
     deleteJoke(joke).then(() => getJokes());
-  }
+  };
 
   return (
     <>
@@ -87,11 +86,11 @@ export const App = () => {
               return (
                 <li className="joke-list-item" key={joke.id}>
                   <p className="joke-list-item-text">{joke.text}</p>
-                  <button 
+                  <button
                     className="button-delete"
                     onClick={() => handleDeleteJoke(joke)}
                   >
-                    <i className="fa-regular fa-trash"/>
+                    <i className="fa-regular fa-trash" />
                   </button>
                   <button
                     className="button-emoji"
@@ -114,11 +113,11 @@ export const App = () => {
               return (
                 <li className="joke-list-item" key={joke.id}>
                   <p className="joke-list-item-text">{joke.text}</p>
-                  <button 
+                  <button
                     className="button-delete"
                     onClick={() => handleDeleteJoke(joke)}
                   >
-                    <i className="fa-regular fa-trash"/>
+                    <i className="fa-regular fa-trash" />
                   </button>
                   <button
                     className="button-emoji"
