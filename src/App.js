@@ -78,7 +78,7 @@ export const App = () => {
         <div className="joke-lists-container">
           <div className="joke-list-container">
             <h2>
-              <i className="fa-regular fa-face-meh face-emoji"></i>
+              <i style={{ margin: `0 10px 0 0` }} className="fa-regular fa-face-meh face-emoji"></i>
               Untold Jokes
               <span className="untold-count">{untoldJokes.length}</span>
             </h2>
@@ -105,7 +105,7 @@ export const App = () => {
           </div>
           <div className="joke-list-container">
             <h2>
-              <i className="fa-regular fa-face-grin-squint face-emoji"></i>
+              <i style={{ margin: `0 10px 0 0` }} className="fa-regular fa-face-grin-squint face-emoji"></i>
               Told Jokes
               <span className="told-count">{toldJokes.length}</span>
             </h2>
